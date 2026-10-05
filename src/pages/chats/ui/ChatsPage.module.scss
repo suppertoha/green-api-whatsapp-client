@@ -1,0 +1,376 @@
+$max-bg: #0b141a;
+$max-sidebar: #202c33;
+$max-panel: #111b21;
+$max-incoming: #202c33;
+$max-outgoing: #005c4b;
+$max-text: #e9edef;
+$max-muted: #8696a0;
+$max-accent: #25d366;
+$max-focus: #7f66ff;
+$max-border: #2a3942;
+
+.authPage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 24px 0 48px;
+}
+
+.authCard {
+  width: 100%;
+  max-width: 420px;
+  padding: 32px;
+  border: 1px solid $max-border;
+  border-radius: 12px;
+  background: $max-sidebar;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+}
+
+.brand {
+  margin: 0 0 8px;
+  font-size: 24px;
+  font-weight: 700;
+  color: $max-accent;
+  letter-spacing: 0.02em;
+}
+
+.authTitle {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: $max-text;
+}
+
+.authSubtitle {
+  margin: 0 0 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: $max-muted;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  color: $max-muted;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid $max-border;
+  border-radius: 8px;
+  background: $max-panel;
+  color: $max-text;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.25s ease;
+
+  &::placeholder {
+    color: $max-muted;
+  }
+
+  &:focus {
+    border-color: #025144;
+  }
+}
+
+.primaryButton {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, $max-accent, #1fa855);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+
+  &:hover {
+    opacity: 0.92;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: minmax(0, 300px) 1fr;
+  height: calc(100vh - 120px);
+  max-height: 750px;
+  min-height: 520px;
+  overflow: hidden;
+  border: 1px solid $max-border;
+  border-radius: 12px;
+  background: $max-bg;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+
+  @include media($md) {
+    grid-template-columns: 1fr;
+    height: auto;
+    max-height: none;
+  }
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid $max-border;
+  background: $max-sidebar;
+}
+
+.instanceBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid $max-border;
+}
+
+.instanceInfo {
+  min-width: 0;
+}
+
+.instanceLabel {
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: $max-muted;
+}
+
+.instanceValue {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: $max-text;
+  word-break: break-all;
+}
+
+.logoutButton {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border: 1px solid $max-border;
+  border-radius: 8px;
+  background: transparent;
+  color: $max-text;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    border-color: $max-focus;
+  }
+}
+
+.createChat {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px 4px;
+  border-bottom: 1px solid $max-border;
+}
+
+.createChatError {
+  padding: 0 12px 8px;
+}
+
+.createInput {
+  flex: 1;
+  min-width: 0;
+}
+
+.iconButton {
+  width: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: $max-accent;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.chatList {
+  flex: 1;
+  margin: 0;
+  padding: 6px 8px;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.chatItem {
+  margin-bottom: 4px;
+}
+
+.chatButton {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: $max-text;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.chatButtonActive {
+  background: rgba(2, 81, 68, 0.32);
+  color: $max-text;
+
+  &:hover {
+    background: rgba(2, 81, 68, 0.38);
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: $max-panel;
+}
+
+.emptyStateWelcome {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 32px;
+  color: #8696a0;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.55;
+  text-align: center;
+  opacity: 0.88;
+}
+
+.emptyState {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: $max-muted;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: center;
+  opacity: 0.85;
+}
+
+.chatHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid $max-border;
+  background: $max-sidebar;
+  color: $max-text;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.bubbleRow {
+  display: flex;
+  width: 100%;
+}
+
+.bubbleRowMine {
+  justify-content: flex-end;
+}
+
+.bubbleRowTheir {
+  justify-content: flex-start;
+}
+
+.bubble {
+  max-width: min(75%, 520px);
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: $max-text;
+  font-size: 14px;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.bubbleMine {
+  background: $max-outgoing;
+}
+
+.bubbleTheir {
+  background: $max-incoming;
+}
+
+.composer {
+  display: flex;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid $max-border;
+  background: $max-sidebar;
+}
+
+.sendButton {
+  flex-shrink: 0;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  background: $max-accent;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.92;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.errorText {
+  margin: 0;
+  font-size: 12px;
+  color: #ff8a80;
+}

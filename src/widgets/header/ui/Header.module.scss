@@ -1,0 +1,35 @@
+.header {
+  border-bottom: 1px solid #2a3942;
+  background: #202c33;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.brandAccent {
+  color: #25d366;
+}
+
+.brandSuffix {
+  color: #e9edef;
+}
+
+.tagline {
+  margin: 0;
+  font-size: 13px;
+  color: #8696a0;
+}

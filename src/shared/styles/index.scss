@@ -1,0 +1,43 @@
+@use 'config/colors' as *;
+@use 'config/layout' as *;
+@use 'config/typography' as *;
+@use 'lib/variables' as *;
+@use 'lib/mixins' as *;
+@use 'base/fonts';
+@use 'base/normalize';
+
+:root {
+	font-family: $mainFont;
+	line-height: 1.5;
+	font-weight: 400;
+	color: #e9edef;
+	background-color: #0b141a;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: $font-weight-heading;
+}
+
+body {
+	min-width: 320px;
+	min-height: 100vh;
+	font-family: $mainFont;
+	background-color: #0b141a;
+}
+
+#root {
+	min-height: 100vh;
+}
+
+.container {
+	@include container;
+}

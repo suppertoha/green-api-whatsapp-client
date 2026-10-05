@@ -1,0 +1,40 @@
+@use 'variables' as *;
+
+@mixin media($width) {
+	@media only screen and (max-width: $width) {
+		@content;
+	}
+}
+
+@mixin min-media($width) {
+	@media only screen and (min-width: $width) {
+		@content;
+	}
+}
+
+@mixin visually-hidden {
+	position: absolute;
+	margin: -1px;
+	padding: 0;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	border: 0;
+	clip: rect(0 0 0 0);
+}
+
+@mixin container {
+	max-width: 1216px;
+	width: 100%;
+	margin: 0 auto;
+	padding: 0 20px;
+	box-sizing: border-box;
+
+	@include media($lg) {
+		padding: 0 30px;
+	}
+
+	@include media($sm) {
+		padding: 0 10px;
+	}
+}
