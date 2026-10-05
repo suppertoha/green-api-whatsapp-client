@@ -1,1 +1,7 @@
-export { greenClient } from "./greenClient";
+export {
+  fetchReceiveNotification,
+  isGreenApiTransportError,
+  removeNotification,
+  sendGreenMessage,
+  type GreenApiRequestOptions,
+} from "./greenApi";

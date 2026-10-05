@@ -8,8 +8,8 @@ export const hasGreenCredentials = (): boolean =>
   );
 
 export const getGreenCredentials = (): { idInstance: string; apiToken: string } | null => {
-  const idInstance = localStorage.getItem(GREEN_ID_STORAGE_KEY);
-  const apiToken = localStorage.getItem(GREEN_TOKEN_STORAGE_KEY);
+  const idInstance = localStorage.getItem(GREEN_ID_STORAGE_KEY)?.trim();
+  const apiToken = localStorage.getItem(GREEN_TOKEN_STORAGE_KEY)?.trim();
 
   if (!idInstance || !apiToken) {
     return null;

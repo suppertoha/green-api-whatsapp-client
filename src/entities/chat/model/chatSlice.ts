@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { greenClient } from "@/shared/api";
+import { sendGreenMessage } from "@/shared/api";
 import { isValidPhoneDigits, toChatId, toDisplayPhone } from "../lib/chatId";
-import type { ChatItem, ChatMessage, ChatSliceState, SendMessageResponse } from "./types";
+import type { ChatMessage, ChatSliceState } from "./types";
 
 const initialState: ChatSliceState = {
   activeChatId: null,
@@ -35,7 +35,7 @@ export const sendMessage = createAsyncThunk(
     const normalizedChatId = toChatId(chatId);
 
     try {
-      const { data } = await greenClient.post<SendMessageResponse>("sendMessage", {
+      const { data } = await sendGreenMessage({
         chatId: normalizedChatId,
         message: trimmedText,
       });
@@ -86,16 +86,17 @@ const chatSlice = createSlice({
         isMe: action.payload.message.isMe ?? false,
       };
 
-      const existing = state.messages[normalizedChatId];
+      const existingMessages = state.messages[normalizedChatId];
 
-      if (existing) {
-        existing.push(message);
+      if (existingMessages?.some((item) => item.idMessage === message.idMessage)) {
+        return;
+      }
+
+      if (existingMessages) {
+        existingMessages.push(message);
       } else {
         state.messages[normalizedChatId] = [message];
       }
-    },
-    setChats: (state, action: PayloadAction<ChatItem[]>) => {
-      state.chats = action.payload;
     },
     resetChatState: () => initialState,
   },
@@ -106,16 +107,20 @@ const chatSlice = createSlice({
       ensureChatInList(state, chatId);
       state.activeChatId = chatId;
 
+      const existingMessages = state.messages[chatId];
+
+      if (existingMessages?.some((item) => item.idMessage === idMessage)) {
+        return;
+      }
+
       const message: ChatMessage = {
         idMessage,
         textMessage,
         isMe: true,
       };
 
-      const existing = state.messages[chatId];
-
-      if (existing) {
-        existing.push(message);
+      if (existingMessages) {
+        existingMessages.push(message);
       } else {
         state.messages[chatId] = [message];
       }
@@ -123,6 +128,6 @@ const chatSlice = createSlice({
   },
 });
 
-export const { setActiveChatId, createChat, addMessage, setChats, resetChatState } =
+export const { setActiveChatId, createChat, addMessage, resetChatState } =
   chatSlice.actions;
 export const { reducer: chatReducer } = chatSlice;

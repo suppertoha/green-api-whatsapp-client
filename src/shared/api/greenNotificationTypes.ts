@@ -16,9 +16,3 @@ export interface GreenNotificationBody {
     };
   };
 }
-
-export interface GreenChatMessage {
-  idMessage: string;
-  textMessage: string;
-  chatId: string;
-}

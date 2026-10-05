@@ -2,35 +2,63 @@ import { useEffect } from "react";
 import { isAxiosError } from "axios";
 import { useAppDispatch } from "@/app/store/hooks";
 import { addMessage } from "@/entities/chat";
-import { greenClient } from "@/shared/api";
-import type {
-  GreenChatMessage,
-  GreenReceiveNotificationResponse,
-} from "../model/types";
+import {
+  fetchReceiveNotification,
+  isGreenApiTransportError,
+  removeNotification,
+} from "@/shared/api";
+import type { GreenNotificationBody } from "@/shared/api/greenNotificationTypes";
 
-const POLL_IDLE_MS = 5000;
+const POLL_ERROR_BACKOFF_MS = 5000;
+
+const INCOMING_WEBHOOK = "incomingMessageReceived";
+const OUTGOING_WEBHOOKS = new Set([
+  "outgoingMessageReceived",
+  "outgoingAPIMessageReceived",
+]);
 
 const sleep = (ms: number) =>
   new Promise<void>((resolve) => {
     setTimeout(resolve, ms);
   });
 
-const isIncomingTextMessage = (
-  body: GreenReceiveNotificationResponse["body"] | undefined,
-): GreenChatMessage | null => {
-  if (body?.typeWebhook !== "incomingMessageReceived") {
+type ParsedWebhookMessage = {
+  chatId: string;
+  textMessage: string;
+  idMessage: string;
+  isMe: boolean;
+};
+
+const parseWebhookMessage = (
+  body: GreenNotificationBody | undefined,
+): ParsedWebhookMessage | null => {
+  if (!body?.typeWebhook) {
     return null;
   }
 
   const chatId = body.senderData?.chatId;
   const textMessage = body.messageData?.textMessageData?.textMessage;
-  const idMessage = body.idMessage;
+  const idMessage = body.idMessage ?? `${Date.now()}`;
 
-  if (!chatId || !textMessage || !idMessage) {
+  if (!chatId || !textMessage) {
     return null;
   }
 
-  return { chatId, textMessage, idMessage };
+  if (body.typeWebhook === INCOMING_WEBHOOK) {
+    return { chatId, textMessage, idMessage, isMe: false };
+  }
+
+  if (OUTGOING_WEBHOOKS.has(body.typeWebhook)) {
+    return { chatId, textMessage, idMessage, isMe: true };
+  }
+
+  return null;
+};
+
+const scheduleNotificationRemoval = (receiptId: number | string): void => {
+  void removeNotification(receiptId).catch(() => {
+    // Ошибка delete не блокирует long poll; повторная попытка на следующем receive.
+  });
 };
 
 type UseLongPollingOptions = {
@@ -45,40 +73,48 @@ export const useLongPolling = ({ enabled }: UseLongPollingOptions) => {
       return;
     }
 
+    const abortController = new AbortController();
     let isMounted = true;
 
     const poll = async () => {
       while (isMounted) {
         try {
-          const response = await greenClient.get<GreenReceiveNotificationResponse | null>(
-            "/ReceiveNotification?receiveTimeout=5",
-          );
+          const response = await fetchReceiveNotification(5, {
+            signal: abortController.signal,
+          });
 
           if (!isMounted) {
             break;
           }
 
-          if (!response.data || !response.data.receiptId) {
-            await sleep(POLL_IDLE_MS);
+          const receiptId = response.data?.receiptId;
+
+          if (
+            !response.data ||
+            typeof response.data !== "object" ||
+            receiptId === undefined ||
+            receiptId === null ||
+            String(receiptId) === "undefined"
+          ) {
             continue;
           }
 
-          const incoming = isIncomingTextMessage(response.data.body);
+          const parsed = parseWebhookMessage(response.data.body);
 
-          if (incoming) {
+          if (parsed) {
             dispatch(
               addMessage({
-                chatId: incoming.chatId,
+                chatId: parsed.chatId,
                 message: {
-                  idMessage: incoming.idMessage,
-                  textMessage: incoming.textMessage,
-                  isMe: false,
+                  idMessage: parsed.idMessage,
+                  textMessage: parsed.textMessage,
+                  isMe: parsed.isMe,
                 },
               }),
             );
           }
 
-          await greenClient.delete(`/DeleteNotification/${response.data.receiptId}`);
+          scheduleNotificationRemoval(receiptId);
         } catch (error) {
           if (!isMounted) {
             break;
@@ -88,7 +124,11 @@ export const useLongPolling = ({ enabled }: UseLongPollingOptions) => {
             break;
           }
 
-          await sleep(POLL_IDLE_MS);
+          if (!isGreenApiTransportError(error)) {
+            continue;
+          }
+
+          await sleep(POLL_ERROR_BACKOFF_MS);
         }
       }
     };
@@ -97,6 +137,7 @@ export const useLongPolling = ({ enabled }: UseLongPollingOptions) => {
 
     return () => {
       isMounted = false;
+      abortController.abort();
     };
   }, [dispatch, enabled]);
 };
