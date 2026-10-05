@@ -9,7 +9,6 @@ import type {
 } from "../model/types";
 
 const POLL_IDLE_MS = 5000;
-const RECEIVE_NOTIFICATION_METHOD = "ReceiveNotification";
 
 const sleep = (ms: number) =>
   new Promise<void>((resolve) => {
@@ -52,7 +51,7 @@ export const useLongPolling = ({ enabled }: UseLongPollingOptions) => {
       while (isMounted) {
         try {
           const response = await greenClient.get<GreenReceiveNotificationResponse | null>(
-            RECEIVE_NOTIFICATION_METHOD,
+            "/ReceiveNotification?receiveTimeout=5",
           );
 
           if (!isMounted) {

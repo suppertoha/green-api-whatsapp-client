@@ -11,8 +11,10 @@ greenClient.interceptors.request.use((config) => {
   const apiTokenInstance = localStorage.getItem("green_token");
 
   if (idInstance && apiTokenInstance && config.url) {
-    const method = config.url.replace(/^\//, "");
-    config.url = `/waInstance${idInstance}/${method}/${apiTokenInstance}`;
+    const withoutLeadingSlash = config.url.replace(/^\//, "");
+    const [methodPath, queryString] = withoutLeadingSlash.split("?", 2);
+    const querySuffix = queryString ? `?${queryString}` : "";
+    config.url = `/waInstance${idInstance}/${methodPath}/${apiTokenInstance}${querySuffix}`;
   }
 
   return config;
