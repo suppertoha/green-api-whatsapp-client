@@ -48,7 +48,11 @@ export const removeNotification = (
   }
 
   const { idInstance, apiToken } = credentials;
-  const url = deleteNotificationUrl(idInstance, apiToken, numericReceiptId);
+  const url = deleteNotificationUrl({
+    idInstance,
+    apiToken,
+    receiptId: numericReceiptId,
+  });
 
   return greenClient.request<{ result?: boolean }>({
     method: "DELETE",

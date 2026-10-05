@@ -7,11 +7,17 @@ export const receiveNotificationUrl = (
 ): string =>
   `${GREEN_API_ORIGIN}/waInstance${idInstance}/ReceiveNotification/${apiToken}?receiveTimeout=${receiveTimeoutSec}`;
 
-export const deleteNotificationUrl = (
-  idInstance: string,
-  apiToken: string,
-  receiptId: number | string,
-): string =>
+export type DeleteNotificationUrlParams = {
+  idInstance: string;
+  apiToken: string;
+  receiptId: number | string;
+};
+
+export const deleteNotificationUrl = ({
+  idInstance,
+  apiToken,
+  receiptId,
+}: DeleteNotificationUrlParams): string =>
   `${GREEN_API_ORIGIN}/waInstance${idInstance}/DeleteNotification/${apiToken}/${receiptId}`;
 
 export const sendMessageUrl = (idInstance: string, apiToken: string): string =>
